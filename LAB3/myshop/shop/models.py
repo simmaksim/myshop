@@ -25,7 +25,6 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    #category = models.ManyToManyField(Category, related_name='products')
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
     name = models.CharField(max_length=200, db_index=True)
     slug = models.SlugField(max_length=200, db_index=True)

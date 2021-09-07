@@ -7,7 +7,6 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
-
 	<style>
 		body,
 		html {
@@ -82,37 +81,34 @@
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-user"></i></span>
 							</div>
-							{{form.username}}
+							<input name="username" class="form-control" id="username" placeholder="Username..." >
 						</div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-key"></i></span>
 							</div>
-							{{form.password1}}
+							<input name="password" class="form-control" id="password" placeholder="Password..." >
 						</div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-key"></i></span>
 							</div>
-							{{form.password2}}
+							<input name="Confirm" class="form-control" id="confirm-password" placeholder="Confirm" >
 						</div>
-						<div class="input-group mb-1">
-							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-key"></i></span>
-							</div>
-							{{form.status}}
-						</div>
+
 
 
 
 				   		<div class="d-flex justify-content-center mt-3 login_container">
 				 			<input class="btn login_btn" type="submit" value="Register Account">
 				   		</div>
-
+						<div id="show-error"></div>
 					</form>
+
+
 				</div>
 
-				{{form.errors}}
+<!--				{{form.errors}}-->
 
 				<div class="mt-4">
 					<div class="d-flex justify-content-center links">
@@ -122,22 +118,48 @@
 			</div>
 		</div>
 	</div>
-	<script>
-						/* Because i didnt set placeholder values in forms.py they will be set here using vanilla Javascript
-		//We start indexing at one because CSRF_token is considered and input field
-		 */
+<script>
+const form = document.getElementById("form");
+const errorDiv = document.getElementById("show-error");
+const username = document.getElementById("username");
+const firstPassword = document.getElementById("password");
+const secondPassword = document.getElementById("confirm-password");
 
-		//Query All input fields
-		var form_fields = document.getElementsByTagName('input')
-		form_fields[1].placeholder='Username..';
-		form_fields[2].placeholder='Enter password...';
-		form_fields[3].placeholder='Re-enter Password...';
-		form_fields[4].placeholder='status...';
+form.addEventListener('submit', (error) => {
+     console.log(5)
+     // All validation checks are run in this method.
+     let incorrectInput = '';
 
+    const firstLetter = username.value[0];
 
-		for (var field in form_fields){
-			form_fields[field].className += ' form-control'
-		}
-	</script>
+    // Return true if first letter is uppercase
+    const firstLetterIsUpperCase = (firstLetter === firstLetter.toUpperCase());
+
+    if (!firstLetterIsUpperCase) {
+        incorrectInput += ' The first letter of username must be uppercase.\n';
+    }
+    const usernameIncludesDigit = /\d/.test(username.value);
+
+    if (!usernameIncludesDigit) {
+        incorrectInput += 'Username must include at least one digit.\n';
+    }
+    const badPasswordLength = (firstPassword.value.length < 8 || firstPassword.value.length > 20);
+
+    if (badPasswordLength) {
+        incorrectInput += ' The password should be within 8 to 20 characters.\n';
+    }
+    const passwordIncludesUppercase = /[a-z]/.test(firstPassword.value);
+
+    if (!passwordIncludesUppercase) {
+        incorrectInput += ' The password should contain at least one uppercase character.\n';
+    }
+
+    if (incorrectInput !== "") {
+        errorDiv.innerText = incorrectInput;
+        errorDiv.style.color = 'red';
+        error.preventDefault();
+    }
+})
+</script>
 </body>
 </html>
