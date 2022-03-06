@@ -49,6 +49,7 @@ def loginPage(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        status = request.POST.get('status')
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
@@ -82,18 +83,49 @@ def product_list(request, category_slug=None):
                    'categories': categories,
                    'products': products})
 
+@login_required
+def another_product_list(request, tag_slug=None):
+    tag = None
+    tags = Tag.objects.all()
+    products = Product.objects.filter(available=True)
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        products = products.filter(tag=tag)
+    return render(request,
+                  'shop/product/list.html',
+                  {'tag': tag,
+                   'categories': tags,
+                   'products': products})
+
+
 @login_required(login_url='/login')
 def product_detail(request, id, slug):
     product = get_object_or_404(Product,
                                 id=id,
                                 slug=slug,
                                 available=True)
+
+    print(product)
+    arr = list(product.tag.values())
+    string=str()
+    mas = list()
+    for x in arr:
+        #string = str(x.get('name') + ',')
+        #string.join(x.get('name'))
+        mas.append(x.get('name'))
+        mas.append(' ')
+
+    #string[-1] = ''
+    print(mas)
+    print(product.tag.values('name'))
+    print(list(product.tag.all()))
     cart_product_form = CartAddProductForm()
 
     return render(request,
                   'shop/product/detail.html',
                   {'product': product,
-                   'cart_product_form': cart_product_form})
+                   'cart_product_form': cart_product_form,
+                   'tag': string.join(mas)})
 
 
 class APIProductList(generics.ListCreateAPIView):

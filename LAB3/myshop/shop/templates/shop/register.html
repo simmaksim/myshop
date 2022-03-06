@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 
@@ -7,6 +6,7 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+
 	<style>
 		body,
 		html {
@@ -75,60 +75,55 @@
 				</div>
 				<div class="d-flex justify-content-center form_container">
 
-					<form method="POST" action="">
+					<form method="POST" action="" id="form">
 						{% csrf_token %}
 						<div class="input-group mb-3">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-user"></i></span>
 							</div>
-							<input name="username" class="form-control" id="username" placeholder="Username..." >
+							{{form.username}}
 						</div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-key"></i></span>
 							</div>
-							<input name="password" class="form-control" id="password" placeholder="Password..." >
+							{{form.password1}}
 						</div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-key"></i></span>
 							</div>
-							<input name="Confirm" class="form-control" id="confirm-password" placeholder="Confirm" >
+							{{form.password2}}
 						</div>
-
 
 
 
 				   		<div class="d-flex justify-content-center mt-3 login_container">
-				 			<input class="btn login_btn" type="submit" value="Register Account">
+							<button class="btn login_btn" type="submit" >Register Account</button>
 				   		</div>
-						<div id="show-error"></div>
+
 					</form>
-
-
 				</div>
-
-<!--				{{form.errors}}-->
+				<div id="show-error"></div>
+				{{form.errors}}
 
 				<div class="mt-4">
 					<div class="d-flex justify-content-center links">
-						!--Already have an account? <a href="http://127.0.0.1:8000/login/" class="ml-2">Login</a>
+						Already have an account? <a href="http://127.0.0.1:8000/login/" class="ml-2">Login</a>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 <script>
-const form = document.getElementById("form");
-const errorDiv = document.getElementById("show-error");
-const username = document.getElementById("username");
-const firstPassword = document.getElementById("password");
-const secondPassword = document.getElementById("confirm-password");
+	const form = document.getElementById("form");
+	const errorDiv = document.getElementById("show-error");
+	const username = document.getElementById("id_username");
+	const password = document.getElementById("id_password1");
+	const confirmPassword = document.getElementById("id_password2");
 
-form.addEventListener('submit', (error) => {
-     console.log(5)
-     // All validation checks are run in this method.
-     let incorrectInput = '';
+	form.addEventListener("submit", (error) => {
+	let incorrectInput = '';
 
     const firstLetter = username.value[0];
 
@@ -138,28 +133,33 @@ form.addEventListener('submit', (error) => {
     if (!firstLetterIsUpperCase) {
         incorrectInput += ' The first letter of username must be uppercase.\n';
     }
-    const usernameIncludesDigit = /\d/.test(username.value);
 
-    if (!usernameIncludesDigit) {
-        incorrectInput += 'Username must include at least one digit.\n';
-    }
-    const badPasswordLength = (firstPassword.value.length < 8 || firstPassword.value.length > 20);
-
+    const badPasswordLength = (password.value.length < 8 || password.value.length > 20);
     if (badPasswordLength) {
         incorrectInput += ' The password should be within 8 to 20 characters.\n';
     }
-    const passwordIncludesUppercase = /[a-z]/.test(firstPassword.value);
 
+    const passwordIncludesUppercase = /[a-z]/.test(password.value);
     if (!passwordIncludesUppercase) {
         incorrectInput += ' The password should contain at least one uppercase character.\n';
     }
+
+	const passwordIncludesDigits = /\d/.test(password.value);
+	if(!passwordIncludesDigits) {
+		incorrectInput += ' The password should contain at least one digit.\n';
+	}
+
+	const isPasswordsMatch = password.value === confirmPassword.value;
+	if(!isPasswordsMatch) {
+		incorrectInput += ' Passwords are different.\n';
+	}
 
     if (incorrectInput !== "") {
         errorDiv.innerText = incorrectInput;
         errorDiv.style.color = 'red';
         error.preventDefault();
     }
-})
+    })
 </script>
 </body>
 </html>
